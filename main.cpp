@@ -1,7 +1,17 @@
 #include <iostream>
 #include "Universe.h"
+#include "DataPreprocess.h"
 
-void GenerateHMBR(vector<vector<int>> &graph, vector<Entity> &entities, int hop_num, vector<vector<MyRect>> &HMBR)
+#define TIME_RECORD
+
+/**
+ * brutal force very slow, 100 hrs for yelp
+ * @param graph
+ * @param entities
+ * @param hop_num
+ * @param HMBR
+ */
+void GenerateHMBR_BF(vector<vector<int>> &graph, vector<Entity> &entities, int hop_num, vector<vector<MyRect>> &HMBR)
 {
     HMBR.resize(entities.size());
     for ( int i = 0; i < graph.size(); i++)
@@ -26,6 +36,7 @@ void GenerateHMBR(vector<vector<int>> &graph, vector<Entity> &entities, int hop_
                     if(visited[pre_neighbor_id])
                         continue;
                     curhop_neighbors.push_back(pre_neighbor_id);
+                    visited[pre_neighbor_id] = true;
                 }
             }
 
@@ -51,6 +62,40 @@ void GenerateHMBR(vector<vector<int>> &graph, vector<Entity> &entities, int hop_
             HMBR[i][j] = cur_MBR;
             prehop_neighbors = curhop_neighbors;
             curhop_neighbors.clear();
+        }
+
+        cout << i << endl;
+        for ( int j = 0; j < hop_num; j++)
+            cout <<HMBR[i][j].left_bottom.x << "," << HMBR[i][j].left_bottom.y << "," << HMBR[i][j].right_top.x << "," << HMBR[i][j].right_top.y<<endl;
+        cout << endl;
+    }
+}
+
+void GenerateHMBR(vector<vector<int>> &graph, vector<Entity> &entities, int hop_num, vector<vector<MyRect>> &HMBR)
+{
+    HMBR.resize(entities.size());
+    for ( int i = 0; i < graph.size(); i++)
+        HMBR[i].resize(hop_num);
+
+    //initialize HMBR[i][0]
+    for ( int i = 0; i < graph.size(); i++)
+        for ( int j = 0; j < graph[i].size(); j++)
+        {
+            int neighbor = graph[i][j];
+            if(entities[neighbor].IsSpatial)
+                HMBR[i][0].MBR(entities[neighbor].location);
+        }
+
+    //initialize HMBR[i][1]~[hop_num-1]
+    for ( int i = 1; i < hop_num; i++)
+    {
+        for ( int j = 0; j < graph.size(); j++)
+        {
+            for ( int k = 0; k < graph[j].size(); k++)
+            {
+                int neighbor = graph[j][k];
+                HMBR[j][i].MBR(HMBR[neighbor][i-1]);
+            }
         }
     }
 }
@@ -90,22 +135,36 @@ void test()
     cout<<endl;
 }
 
-int main()
+void GenerateHMBR()
 {
-    string dir = "D:\\Ubuntu_shared\\Real_Data\\Yelp";
+    string dir = "D:\\Ubuntu_shared\\GeoMinHop\\data\\Yelp";
     int node_count;
+    int hop_num = 6;
 
-    string graph_path = dir + "\\graph_entity_newformat.txt";
+    string graph_path = dir + "\\graph.txt";
     vector<vector<int>> graph;
     ReadGraph(graph, node_count, graph_path);
 
-    string entity_path = dir + "\\Random_spatial_distributed\\1\\entity_newformat.txt";
+    string entity_path = dir + "\\entity.txt";
     vector<Entity> entities;
     ReadEntity(node_count, entities, entity_path);
 
     vector<vector<MyRect>> HMBR;
-    GenerateHMBR(graph, entities, 2, HMBR);
-    OutputHMBR(dir + "\\HMBR.txt", HMBR, 2);
+    GenerateHMBR(graph, entities, hop_num, HMBR);
+    OutputHMBR(dir + "\\HMBR.txt", HMBR, hop_num);
 
     cout << "success"<< endl;
+}
+
+void DataPreprocess()
+{
+    string ori_graph_path = "D:\\Ubuntu_shared\\Real_Data\\Yelp\\graph_entity_newformat.txt";
+    string new_graph_path = "D:\\Ubuntu_shared\\GeoMinHop\\data\\Yelp\\graph.txt";
+    GraphConvert(ori_graph_path,new_graph_path);
+}
+
+int main()
+{
+//    DataPreprocess();
+    GenerateHMBR();
 }
