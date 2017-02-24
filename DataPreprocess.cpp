@@ -1,6 +1,8 @@
 //
 // Created by ysun138 on 2/23/2017.
 //
+#include "DataPreprocess.h"
+
 void ReadGraph(vector<set<int>> &graph, string filepath)
 {
     int node_count;

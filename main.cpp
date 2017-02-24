@@ -158,13 +158,15 @@ void GenerateHMBR()
 
 void DataPreprocess()
 {
-    string ori_graph_path = "D:\\Ubuntu_shared\\Real_Data\\Yelp\\graph_entity_newformat.txt";
-    string new_graph_path = "D:\\Ubuntu_shared\\GeoMinHop\\data\\Yelp\\graph.txt";
+    string dataset = "Gowalla";
+    string dir = "D:\\Ubuntu_shared\\GeoMinHop\\data\\" + dataset;
+    string ori_graph_path = dir + "\\graph_entity_newformat.txt";
+    string new_graph_path = dir + "\\graph.txt";
     GraphConvert(ori_graph_path,new_graph_path);
 }
 
 int main()
 {
-//    DataPreprocess();
-    GenerateHMBR();
+    DataPreprocess();
+//    GenerateHMBR();
 }
