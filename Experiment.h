@@ -5,4 +5,9 @@
 #ifndef MINHOP_EXPERIMENT_H
 #define MINHOP_EXPERIMENT_H
 
+#include "Universe.h"
+#include "Hmbr.h"
+
+void IniTime(string dataset);
+
 #endif //MINHOP_EXPERIMENT_H
