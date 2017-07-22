@@ -115,6 +115,22 @@ void ReadGraph(vector<vector<int>> &graph, int &node_count, string graph_filepat
 	fclose(stdin);
 }
 
+void WriteGraph(vector<set<int>> &graph, string filepath)
+{
+    char * ch = (char*) filepath.data();
+    freopen(ch, "w", stdout);
+
+    printf("%d\n", graph.size());
+    for ( int i = 0; i < graph.size(); i++)
+    {
+        printf("%d,%d", i, graph[i].size());
+        for ( int neighbor : graph[i])
+            printf(",%d", neighbor);
+        printf("\n");
+    }
+    fclose(stdout);
+}
+
 void GenerateInedgeGraph(vector<vector<int>> &graph, vector<vector<int>> &in_edge_graph)
 {
 	int node_count = graph.size();
@@ -127,6 +143,40 @@ void GenerateInedgeGraph(vector<vector<int>> &graph, vector<vector<int>> &in_edg
 			in_edge_graph[neighbor].push_back(i);
 		}
 	}
+}
+
+void GenerateHopNeighbors(vector<vector<int>> &graph, string source_path, string output_path)
+{
+    vector<vector<int>> hopneighbor_graph;
+    int node_count;
+    ReadGraph(hopneighbor_graph, node_count, source_path);
+//    vector<set<int>> output_neighbors = vector<set<int>>(node_count);
+    set<int> next_neighbors;
+
+    char * ch = (char *) output_path.data();
+    freopen(ch, "w", stdout);
+    printf("%d\n", node_count);
+
+    for ( int i = 0; i < graph.size(); i++)
+    {
+        for ( int j = 0; j < graph[i].size(); j++)
+        {
+            int neighbor = graph[i][j];
+            for (int k = 0; k < hopneighbor_graph[neighbor].size(); k++)
+            {
+                next_neighbors.insert(hopneighbor_graph[neighbor][k]);
+            }
+        }
+        printf("%d,%d", i, next_neighbors.size());
+        for ( int neighbor : next_neighbors)
+        {
+            printf(",%d", neighbor);
+        }
+        printf("\n");
+        next_neighbors.clear();
+    }
+//    WriteGraph(output_neighbors, output_path);
+    fclose(stdout);
 }
 
 

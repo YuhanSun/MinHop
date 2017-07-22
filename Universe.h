@@ -163,7 +163,13 @@ void TopologicalSort(vector<vector<int>> &graph, queue<int> &Queue);
 /*Read Graph from adjacent list txt file*/
 void ReadGraph(vector<vector<int>> &graph, int &node_count, string graph_filepath);
 
+void WriteGraph(vector<set<int>> &graph, string filepath);
+
+
 /*Get in_edge graph*/
 void GenerateInedgeGraph(vector<vector<int>> &graph, vector<vector<int>> &in_edge_graph);
+
+void GenerateHopNeighbors(vector<vector<int>> &graph, string source_path, string output_path);
+
 
 #endif
