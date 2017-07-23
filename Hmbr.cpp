@@ -5,7 +5,9 @@
 #include "Hmbr.h"
 
 /**
- * brutal force very slow, 100 hrs for yelp
+ * Brutal force very slow, 100 hrs for yelp.
+ * For each node each hop, calculate all reachable nodes.
+ * Then calculate HMBR.
  * @param graph
  * @param entities
  * @param hop_num
@@ -71,6 +73,14 @@ void GenerateHMBR_BF(vector<vector<int>> &graph, vector<Entity> &entities, int h
     }
 }
 
+/**
+ * Dynamically update the HMBR of all the nodes based on previous hop
+ * @param graph
+ * @param entities
+ * @param hop_num
+ * @param HMBR
+ * @return
+ */
 vector<int> GenerateHMBR(vector<vector<int>> &graph, vector<Entity> &entities, int hop_num, vector<vector<MyRect>> &HMBR)
 {
     vector<int> v_time;
@@ -79,7 +89,7 @@ vector<int> GenerateHMBR(vector<vector<int>> &graph, vector<Entity> &entities, i
         HMBR[i].resize(hop_num);
 
     int start = clock();
-    //initialize HMBR[i][0]
+    //initialize HMBR[i][0] (the HMBR for 1 hop)
     for ( int i = 0; i < graph.size(); i++)
         for ( int j = 0; j < graph[i].size(); j++)
         {
